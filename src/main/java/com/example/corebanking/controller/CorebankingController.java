@@ -23,24 +23,25 @@ import com.example.corebanking.repository.ClientRepository;
 @RequestMapping("/clients")
 public class CorebankingController {
 
-    @Autowired
-    private ClientRepository clientRepository;
+  @Autowired private ClientRepository clientRepository;
 
-    @GetMapping
-    private ResponseEntity<List<Client>> getClients(){
-        return new ResponseEntity<>(clientRepository.findAll(), HttpStatus.OK);
+  @GetMapping
+  private ResponseEntity<List<Client>> getClients() {
+    return new ResponseEntity<>(clientRepository.findAll(), HttpStatus.OK);
+  }
+
+  @GetMapping("/{clientId}")
+  private ResponseEntity<Client> getClient(@PathVariable Long clientId) {
+    Optional<Client> optAccount = clientRepository.findById(clientId);
+    if (!optAccount.isPresent()) {
+      throw new EntityNotFoundException("Client with id " + clientId + " not found.\n");
     }
-    @GetMapping("/{clientId}")
-    private ResponseEntity<Client> getClient(@PathVariable Long clientId){
-        Optional<Client> optAccount = clientRepository.findById(clientId);
-        if(!optAccount.isPresent()) {
-            throw new EntityNotFoundException("Client with id " + clientId + " not found.\n");
-        }
-        return new ResponseEntity<>(optAccount.get(), HttpStatus.OK);
-    }
-    @PostMapping
-    public ResponseEntity<Long> createClient(@RequestBody ClientCreationDTO clientCreationDTO) {
-        Client saved = clientRepository.saveAndFlush(new Client(clientCreationDTO.getName()));
-        return new ResponseEntity<>(saved.getId(), HttpStatus.CREATED);
-    }
+    return new ResponseEntity<>(optAccount.get(), HttpStatus.OK);
+  }
+
+  @PostMapping
+  public ResponseEntity<Long> createClient(@RequestBody ClientCreationDTO clientCreationDTO) {
+    Client saved = clientRepository.saveAndFlush(new Client(clientCreationDTO.getName()));
+    return new ResponseEntity<>(saved.getId(), HttpStatus.CREATED);
+  }
 }

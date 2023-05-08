@@ -15,40 +15,41 @@ import com.example.corebanking.service.AccountService;
 @RequestMapping("/accounts")
 public class AccountController {
 
-    @Autowired
-    private final AccountService accountService;
+  @Autowired private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+  public AccountController(AccountService accountService) {
+    this.accountService = accountService;
+  }
 
-    @PostMapping("/{accountId}/deposit")
-    public ResponseEntity<?> deposit(@PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
-        try {
-            accountService.deposit(accountId, operationDTO.getAmount());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+  @PostMapping("/{accountId}/deposit")
+  public ResponseEntity<?> deposit(
+      @PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
+    try {
+      accountService.deposit(accountId, operationDTO.getAmount());
+      return ResponseEntity.ok().build();
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
     }
+  }
 
-    @PostMapping("/{accountId}/withdraw")
-    public ResponseEntity<?> withdraw(@PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
-        try {
-            accountService.withdraw(accountId, operationDTO.getAmount());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+  @PostMapping("/{accountId}/withdraw")
+  public ResponseEntity<?> withdraw(
+      @PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
+    try {
+      accountService.withdraw(accountId, operationDTO.getAmount());
+      return ResponseEntity.ok().build();
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
     }
+  }
 
-    @PostMapping("/{accountId}/withdraw-all")
-    public ResponseEntity<?> fullWithdraw(@PathVariable Long accountId) {
-        try {
-            accountService.withdrawAll(accountId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+  @PostMapping("/{accountId}/withdraw-all")
+  public ResponseEntity<?> fullWithdraw(@PathVariable Long accountId) {
+    try {
+      accountService.withdrawAll(accountId);
+      return ResponseEntity.ok().build();
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
     }
+  }
 }

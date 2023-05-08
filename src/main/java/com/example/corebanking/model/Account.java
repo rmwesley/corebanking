@@ -9,55 +9,52 @@ import javax.persistence.OneToMany;
 import javax.persistence.GeneratedValue;
 
 @Entity
-public class Account implements IHistory{
+public class Account implements IHistory {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id @GeneratedValue private Long id;
 
-    private double balance = 0;
+  private double balance = 0;
 
-    @OneToMany
-    private List<Operation> operations;
-    //private List<Operation> operations = new ArrayList<Operation>();
+  @OneToMany private List<Operation> operations;
+  // private List<Operation> operations = new ArrayList<Operation>();
 
-    public Account(){
-    }
+  public Account() {}
 
-    public Account(double initialBalance) {
-        balance = initialBalance;
-    }
+  public Account(double initialBalance) {
+    balance = initialBalance;
+  }
 
-	public Long getId() {
-        return id;
-    }
-    public double getBalance() {
-        return balance;
-    }
-    public List<Operation> getOperations() {
-        return operations;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void deposit(double amount) {
-        balance += amount;
-    }
+  public double getBalance() {
+    return balance;
+  }
 
-    public void withdraw(double amount) {
-        balance -= amount;
-    }
+  public List<Operation> getOperations() {
+    return operations;
+  }
 
-	public void withdrawAll(){
-		operations.add(new Operation(this, OperationType.CASH_OUT, -balance));
-		this.balance = 0;
-	}
+  public void deposit(double amount) {
+    balance += amount;
+  }
 
-	@Override
-	public String toString(){
-		return this.id + ":" + this.balance;
-	}
-	public String history(){
-		return operations.stream()
-			.map(Object::toString)
-			.collect(Collectors.joining("\n\n"));
-	}
+  public void withdraw(double amount) {
+    balance -= amount;
+  }
+
+  public void withdrawAll() {
+    operations.add(new Operation(this, OperationType.CASH_OUT, -balance));
+    this.balance = 0;
+  }
+
+  @Override
+  public String toString() {
+    return this.id + ":" + this.balance;
+  }
+
+  public String history() {
+    return operations.stream().map(Object::toString).collect(Collectors.joining("\n\n"));
+  }
 }
