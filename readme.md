@@ -1,24 +1,35 @@
 ## Core Banking REST API
+This is a corebanking Spring Boot REST API.
+It has functionality for client and account management,
+as well as for common basic operations such as deposits and withdrawals,
+and more slightly complex ones, like transfers between accounts.
 
 Exposed Endpoints
 -----------------
 Check the project's `Swagger` documentation for details and information on the endpoints.
-Just head to `/swagger-ui/index.html` after running the Spring-Boot application.
-`Swagger` doesn't only provide documentation, you can try out the endpoints as well, just like as you would do with Postman!
+Just head to
+`/swagger-ui/index.html`
+after running the Spring-Boot application.
+`Swagger` doesn't only provide documentation,
+you can try out the endpoints as well,
+just like as you would do with Postman!
 
 Model/Schema Description
 ------------------------
 A `Client` has a collection of `Account` objects.
 An `Account` has a collection of `Operation` objects.
 These operations implement the `Runnable` interface.
-Therefore, they can be executed. By a Thread, for example. Or simply by calling their `.run()` method.
+Therefore, they can be executed by a Thread,
+or simply by calling their `.run()` method, for example.
 A boolean field `alreadExecuted` stores the state of an `Operation`.
-Each `Account` maintains its collection/list of operations, basically, its history.
+Each `Account` maintains its collection/list of operations i.e. its history.
 
 Most operations use no service, like deposits and withdrawals.
 That is, a simple `Operation` just calls the appropriate method of an `Account` object.
 This is not true for transfers.
-For these we use an `AccountService`, which also is responsible for creating the `Account` objects and saving them in the database, which is handled by `AccountRepository`.
+For these we use an `AccountService`,
+which also is responsible for creating the `Account` objects and saving them in the database,
+which is handled by `AccountRepository`.
 
 Maven Commands
 --------------
