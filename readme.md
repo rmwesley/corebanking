@@ -1,3 +1,11 @@
+## Core Banking REST API
+
+Exposed Endpoints
+-----------------
+Check the project's `Swagger` documentation for details and information on the endpoints.
+Just head to `/swagger-ui/index.html` after running the Spring-Boot application.
+`Swagger` doesn't only provide documentation, you can try out the endpoints as well, just like as you would do with Postman!
+
 Maven Commands
 --------------
 
