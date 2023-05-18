@@ -25,8 +25,8 @@ class CorebankingApplicationTests {
 
   @Autowired private TestRestTemplate testRestTemplate;
 
-  private Account testAccount = new Account();
   private Client testClient = new Client("John Doe");
+  private Account testAccount = new Account(testClient, 100);
 
   @Autowired private ClientRepository mockClientRepository;
 
@@ -46,29 +46,30 @@ class CorebankingApplicationTests {
 
   @Test
   void postClientRequestControllerTest() {
-    // H
-    ResponseEntity<Long> responseEntity =
-        // Long responseEntity =
+    ResponseEntity<Client> responseEntity =
         testRestTemplate.postForEntity(
-            "http://localhost:" + port + "/clients", new ClientCreationDTO("John Doe"), Long.class);
+            "http://localhost:" + port + "/clients",
+            new ClientCreationDTO("John Doe"),
+            Client.class);
+    Client client = responseEntity.getBody();
+
     assertEquals(201, responseEntity.getStatusCodeValue());
-    assertEquals(1, responseEntity.getBody());
+    assertEquals("John Doe", client.getName());
+    assertEquals(1, client.getId());
   }
 
   @Test
   public void testNormalOperations() {
-    // Account account = new Account();
     testAccount.deposit(1.5);
-    assertEquals(1.5, testAccount.getBalance());
+    assertEquals(101.5, testAccount.getBalance());
     testAccount.withdraw(3.3);
-    assertEquals(1.5 - 3.3, testAccount.getBalance());
+    assertEquals(100 + 1.5 - 3.3, testAccount.getBalance());
     testAccount.deposit(5);
-    assertEquals(1.5 - 3.3 + 5, testAccount.getBalance());
+    assertEquals(100 + 1.5 - 3.3 + 5, testAccount.getBalance());
   }
 
   @Test
   public void testThreadSafety() throws InterruptedException {
-    // Account account = new Account();
     Thread depositThread =
         new Thread(
             () -> {
@@ -85,17 +86,16 @@ class CorebankingApplicationTests {
             });
     depositThread.start();
     depositThread.join();
-    assertEquals(1000, testAccount.getBalance());
+    assertEquals(1100, testAccount.getBalance());
 
     withdrawThread.start();
     withdrawThread.join();
-    assertEquals(500, testAccount.getBalance());
+    assertEquals(600, testAccount.getBalance());
   }
 
   @Test
   public void testBarrier() {
     double finalBalance = 100;
-    testAccount = new Account(100);
 
     CyclicBarrier barrier =
         new CyclicBarrier(
@@ -145,8 +145,6 @@ class CorebankingApplicationTests {
 
     double finalBalance = 100;
 
-    testAccount = new Account(100);
-
     CountDownLatch latch = new CountDownLatch(2);
 
     Runnable depositTask =
@@ -180,14 +178,12 @@ class CorebankingApplicationTests {
   public void testMultithreading() {
     double finalBalance = 100;
 
-    testAccount = new Account(100);
-
     CountDownLatch latch = new CountDownLatch(1);
     CyclicBarrier barrier =
         new CyclicBarrier(
             2,
             () -> {
-              System.out.println("Withdraw transaction finished for real!");
+              System.out.println("Barrier finished!");
             });
 
     Runnable depositTask =
