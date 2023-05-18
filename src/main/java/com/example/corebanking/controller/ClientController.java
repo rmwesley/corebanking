@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.corebanking.dto.ClientCreationDTO;
+import com.example.corebanking.model.Account;
 import com.example.corebanking.model.Client;
 import com.example.corebanking.repository.ClientRepository;
+import com.example.corebanking.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ClientController {
 
   @Autowired private ClientRepository clientRepository;
+  @Autowired private AccountService accountService;
 
   @Operation(summary = "Get list of all clients")
   @GetMapping
@@ -45,5 +48,13 @@ public class ClientController {
     Client client = new Client(clientCreationDTO.getName());
     clientRepository.saveAndFlush(client);
     return new ResponseEntity<>(client, HttpStatus.CREATED);
+  }
+
+  @Operation(summary = "Creates and adds an account to a client in the database")
+  @PostMapping("/{clientId}")
+  public ResponseEntity<Account> createAccount(@PathVariable Long clientId) {
+    Client client = clientRepository.getReferenceById(clientId);
+    Account createdAccount = accountService.createNewAccountFor(client);
+    return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
   }
 }
