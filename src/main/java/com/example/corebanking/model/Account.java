@@ -1,26 +1,39 @@
 package com.example.corebanking.model;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.GeneratedValue;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Account implements IHistory {
 
   @Id @GeneratedValue private Long id;
 
+  @ManyToOne private Client client;
+
   private double balance = 0;
 
-  @OneToMany private List<Operation> operations;
+  @OneToMany(mappedBy = "sourceAccount")
+  private Collection<Operation> operations;
   // private List<Operation> operations = new ArrayList<Operation>();
 
   public Account() {}
 
-  public Account(double initialBalance) {
+  public Account(Client client) {
+    this.client = client;
+  }
+
+  public Account(Client client, double initialBalance) {
+    this.client = client;
     balance = initialBalance;
   }
 
@@ -32,7 +45,7 @@ public class Account implements IHistory {
     return balance;
   }
 
-  public List<Operation> getOperations() {
+  public Collection<Operation> getOperations() {
     return operations;
   }
 

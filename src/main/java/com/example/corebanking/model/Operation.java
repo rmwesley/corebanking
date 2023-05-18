@@ -1,7 +1,6 @@
 package com.example.corebanking.model;
 
 import java.sql.Date;
-// import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,8 +15,9 @@ public class Operation implements Runnable {
 
   @Id @GeneratedValue private Long id;
 
-  // @JoinColumn(name = "account_id")
-  @ManyToOne private final Account account;
+  @ManyToOne private final Account sourceAccount;
+
+  @ManyToOne private final Account targetAccount;
 
   private final OperationType operationType;
 
@@ -25,25 +25,52 @@ public class Operation implements Runnable {
 
   private double amount;
 
-  public Operation(Account account, OperationType operationType, double amount) {
-    this.account = account;
+  private boolean alreadyExecuted;
+
+  public Operation(Account source, OperationType operationType, double amount) {
+    if (operationType == OperationType.TRANSFER) {
+      throw new IllegalArgumentException(
+          "Target account needs to be provided when making a transference");
+    }
+    this.sourceAccount = source;
+    this.targetAccount = null;
     this.operationType = operationType;
     this.amount = amount;
+    this.alreadyExecuted = false;
+  }
+
+  public Operation(Account source, Account target, OperationType operationType, double amount) {
+    this.sourceAccount = source;
+    this.targetAccount = target;
+    this.operationType = operationType;
+    this.amount = amount;
+    this.alreadyExecuted = false;
   }
 
   @Override
   public void run() {
     switch (operationType) {
       case DEPOSIT:
-        account.deposit(amount);
+        sourceAccount.deposit(amount);
         break;
       case WITHDRAW:
-        account.withdraw(amount);
+        sourceAccount.withdraw(amount);
         break;
       case CASH_OUT:
-        account.withdrawAll();
+        sourceAccount.withdrawAll();
         break;
+      case TRANSFER:
+        if (amount < 0) {
+          throw new IllegalArgumentException("Only positive transfer amounts are allowed");
+        }
+        sourceAccount.withdraw(amount);
+        targetAccount.deposit(amount);
     }
+    this.alreadyExecuted = true;
+  }
+
+  public boolean wasAlreadyExecuted() {
+    return alreadyExecuted;
   }
 
   @Override
