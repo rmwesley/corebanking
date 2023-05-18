@@ -21,7 +21,7 @@ import com.example.corebanking.repository.ClientRepository;
 
 @RestController
 @RequestMapping("/clients")
-public class CorebankingController {
+public class ClientController {
 
   @Autowired private ClientRepository clientRepository;
 
