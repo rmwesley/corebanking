@@ -26,14 +26,6 @@ public class Client implements IHistory {
     this.name = name;
   }
 
-  public void createAccount() {
-    accounts.add(new Account());
-  }
-
-  public void createAccount(double initialBalance) {
-    accounts.add(new Account(initialBalance));
-  }
-
   public void addAccount(Account acc) {
     accounts.add(acc);
   }
@@ -50,7 +42,7 @@ public class Client implements IHistory {
     return this.accounts;
   }
 
-  public double getTotalBalance() {
+  public double calculateTotalBalance() {
     return this.accounts.stream().mapToDouble(Account::getBalance).sum();
   }
 
