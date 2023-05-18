@@ -1,7 +1,11 @@
 package com.example.corebanking.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,47 +13,65 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.corebanking.dto.OperationDTO;
+import com.example.corebanking.model.Account;
+import com.example.corebanking.repository.AccountRepository;
+import com.example.corebanking.repository.ClientRepository;
 import com.example.corebanking.service.AccountService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/accounts")
+@Tag(name = "Accounts API")
 public class AccountController {
 
-  @Autowired private final AccountService accountService;
+  @Autowired private AccountService accountService;
+  @Autowired private AccountRepository accountRepository;
+  @Autowired private ClientRepository clientRepository;
 
-  public AccountController(AccountService accountService) {
-    this.accountService = accountService;
+  @Operation(summary = "Get account by id")
+  @GetMapping("/{accountId}")
+  public ResponseEntity<Account> getAccount(@PathVariable Long accountId) {
+    Account account = accountRepository.getReferenceById(accountId);
+    return new ResponseEntity<>(account, HttpStatus.OK);
   }
 
+  @Operation(summary = "Deposit an amount to account")
   @PostMapping("/{accountId}/deposit")
-  public ResponseEntity<?> deposit(
+  public ResponseEntity<Account> deposit(
       @PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
-    try {
-      accountService.deposit(accountId, operationDTO.getAmount());
-      return ResponseEntity.ok().build();
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+    Account account = accountRepository.getReferenceById(accountId);
+
+    account.deposit(operationDTO.getAmount());
+    accountRepository.flush();
+    clientRepository.flush();
+    // return ResponseEntity.ok().build();
+    return new ResponseEntity<>(account, HttpStatus.OK);
   }
 
+  @Operation(summary = "Withdraw an amount from account")
   @PostMapping("/{accountId}/withdraw")
-  public ResponseEntity<?> withdraw(
+  public ResponseEntity<Account> withdraw(
       @PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
-    try {
-      accountService.withdraw(accountId, operationDTO.getAmount());
-      return ResponseEntity.ok().build();
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+    Account account = accountRepository.getReferenceById(accountId);
+
+    account.withdraw(operationDTO.getAmount());
+    accountRepository.flush();
+    clientRepository.flush();
+    // return ResponseEntity.ok().build();
+    return new ResponseEntity<>(account, HttpStatus.OK);
   }
 
+  @Operation(summary = "Withdraw everything from account")
   @PostMapping("/{accountId}/withdraw-all")
-  public ResponseEntity<?> fullWithdraw(@PathVariable Long accountId) {
-    try {
-      accountService.withdrawAll(accountId);
-      return ResponseEntity.ok().build();
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+  public ResponseEntity<Account> fullWithdraw(@PathVariable Long accountId) {
+    Account account = accountRepository.getReferenceById(accountId);
+
+    account.withdrawAll();
+    accountRepository.flush();
+    clientRepository.flush();
+    // return ResponseEntity.ok().build();
+    return new ResponseEntity<>(account, HttpStatus.OK);
   }
 }
