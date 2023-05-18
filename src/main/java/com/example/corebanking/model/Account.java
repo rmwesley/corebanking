@@ -15,7 +15,8 @@ public class Account implements IHistory {
 
   private double balance = 0;
 
-  @OneToMany private Collection<Operation> operations;
+  @OneToMany(mappedBy = "sourceAccount")
+  private Collection<Operation> operations;
   // private List<Operation> operations = new ArrayList<Operation>();
 
   public Account() {}

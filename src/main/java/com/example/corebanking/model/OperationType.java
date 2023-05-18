@@ -3,7 +3,8 @@ package com.example.corebanking.model;
 public enum OperationType {
   DEPOSIT("Deposit"),
   WITHDRAW("Withdraw"),
-  CASH_OUT("Cash Out");
+  CASH_OUT("Cash Out"),
+  TRANSFER("Transfer");
 
   private final String displayName;
 

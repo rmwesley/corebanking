@@ -1,11 +1,16 @@
 package com.example.corebanking.dto;
 
 public class OperationDTO {
-  private Long accountId;
+  private Long sourceAccountId;
+  private Long targetAccountId;
   private double amount;
 
-  public Long getAccountId() {
-    return accountId;
+  public Long getSourceId() {
+    return sourceAccountId;
+  }
+
+  public Long getTargetId() {
+    return targetAccountId;
   }
 
   public double getAmount() {
