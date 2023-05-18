@@ -1,6 +1,6 @@
 package com.example.corebanking.model;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
@@ -15,7 +15,7 @@ public class Account implements IHistory {
 
   private double balance = 0;
 
-  @OneToMany private List<Operation> operations;
+  @OneToMany private Collection<Operation> operations;
   // private List<Operation> operations = new ArrayList<Operation>();
 
   public Account() {}
@@ -32,7 +32,7 @@ public class Account implements IHistory {
     return balance;
   }
 
-  public List<Operation> getOperations() {
+  public Collection<Operation> getOperations() {
     return operations;
   }
 

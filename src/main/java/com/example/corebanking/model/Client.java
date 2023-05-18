@@ -1,6 +1,6 @@
 package com.example.corebanking.model;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ public class Client implements IHistory {
 
   String name;
 
-  @OneToMany List<Account> accounts;
+  @OneToMany Collection<Account> accounts;
 
   public Client() {}
 
@@ -46,7 +46,7 @@ public class Client implements IHistory {
     return this.id;
   }
 
-  public List<Account> getAccounts() {
+  public Collection<Account> getAccounts() {
     return this.accounts;
   }
 
