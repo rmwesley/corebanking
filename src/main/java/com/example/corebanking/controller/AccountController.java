@@ -74,4 +74,31 @@ public class AccountController {
     // return ResponseEntity.ok().build();
     return new ResponseEntity<>(account, HttpStatus.OK);
   }
+
+  @Operation(summary = "Make a transference to a target account")
+  @PostMapping("/{accountId}/transfer")
+  public ResponseEntity<?> transfer(
+      @PathVariable Long accountId, @RequestBody OperationDTO operationDTO) {
+    if (operationDTO.getSourceId() != accountId) {
+      throw new IllegalArgumentException("Source account and current account differ");
+    }
+    accountService.transfer(operationDTO);
+    accountRepository.flush();
+    clientRepository.flush();
+    // return ResponseEntity.ok().build();
+    return new ResponseEntity<>("Transfrence concluded", HttpStatus.OK);
+  }
+
+  @Operation(summary = "Delete account by id")
+  @DeleteMapping("/{accountId}")
+  public ResponseEntity<Long> deleteAccount(@PathVariable Long accountId) {
+    Account account = accountRepository.getReferenceById(accountId);
+    if (account.getBalance() != 0) {
+      throw new UnsupportedOperationException("Cannot delete account if balance is not 0");
+    }
+    accountRepository.delete(account);
+    accountRepository.flush();
+    clientRepository.flush();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }
